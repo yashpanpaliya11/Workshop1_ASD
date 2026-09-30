@@ -54,11 +54,16 @@ async function readFileWithDelay() {
 
 app.get("/product/:id", (req, res) => {
 
+    const id = parseInt(req.params.id);
+
+    if (cache[id]) {
+        res.setHeader("X-Cache", "HIT");
+        return res.json(cache[id]);
+    }
+
     const data = fs.readFileSync(dbpath, "utf-8");
 
     const products = JSON.parse(data);
-
-    const id = parseInt(req.params.id);
 
     const product = products.find((p) => p.id === id);
 
@@ -68,6 +73,9 @@ app.get("/product/:id", (req, res) => {
         });
     }
 
+    cache[id] = product;
+
+    res.setHeader("X-Cache", "MISS");
     res.json(product);
 });
 
