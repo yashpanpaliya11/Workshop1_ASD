@@ -17,6 +17,7 @@ async function readFile() {
 }
 // readFile();
 
+
 app.get("/product", async (req, res) => {
   const data = await fs.readFile(dbpath, "utf-8");
 
@@ -25,6 +26,23 @@ app.get("/product", async (req, res) => {
   // console.log(products);
 
   res.json(products);
+});
+
+app.get("/product/:id", (req, res) => {
+    const data = fs.readFileSync("db.json", "utf-8");
+    const products = JSON.parse(data);
+    const id = parseInt(req.params.id);
+
+    const product = products.find((p) => p.id === id);
+    if (!product) {
+
+        return res.status(404).json({
+            message: "not found"
+
+        });
+    }
+
+    res.json(product);
 });
 
 app.listen(3000);
