@@ -7,15 +7,21 @@ const app = express();
 const dbpath = path.join(__dirname, "db.json");
 
 async function readFile() {
-  try {
-    const data = await fs.readFile(dbpath, "utf-8");
-
-    console.log(data);
-  } catch (error) {
-    console.log("error", error);
-  }
+    try {
+        const data = await fs.readFile(dbpath, "utf-8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.log("error", error);
+    }
 }
 // readFile();
+async function readFileWithDelay() {
+    await new Promise((resolve, reject) => {
+        setTimeout(resolve, 1500);});
+        
+        let products = await readFile();
+        return products;
+}
 
 
 app.get("/product", async (req, res) => {
